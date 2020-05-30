@@ -5,6 +5,7 @@ import com.toxin.reactive.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,7 +61,13 @@ public class EmployeeController {
     }
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Employee> stream() {
-        return employeeService.stream();
+    public Flux<ServerSentEvent<Employee>> stream() {
+        return employeeService.stream().map(e ->
+            ServerSentEvent.<Employee>builder()
+                .id(String.valueOf(e.getId()))
+                .event("employees")
+                .data(e)
+                .build()
+        );
     }
 }
