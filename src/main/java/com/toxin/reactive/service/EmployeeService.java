@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -14,10 +15,6 @@ import java.time.LocalDateTime;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-
-    public Flux<Employee> findAll() {
-        return employeeRepository.findAll();
-    }
 
     public Mono<Employee> find(String id) {
         return employeeRepository.findById(id);
@@ -42,5 +39,11 @@ public class EmployeeService {
 
     public Mono<Void> remove(String id) {
         return employeeRepository.deleteById(id);
+    }
+
+    public Flux<Employee> stream() {
+        return employeeRepository
+            .streamAll()
+            .delayElements(Duration.ofSeconds(1));
     }
 }

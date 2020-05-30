@@ -7,11 +7,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.core.CollectionOptions;
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.UUID;
 
 @SpringBootApplication
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class ReactiveApplication {
 
     private final EmployeeRepository employeeRepository;
+    private final ReactiveMongoOperations operations;
 
     public static void main(String[] args) {
         SpringApplication.run(ReactiveApplication.class, args);
@@ -27,12 +29,19 @@ public class ReactiveApplication {
 
     @Bean
     InitializingBean init() {
-        return () -> employeeRepository.deleteAll()
+        var options = CollectionOptions
+            .empty()
+            .capped()
+            .size(1024 * 1024)
+            .maxDocuments(100);
+
+        return () -> operations.dropCollection(Employee.class)
+            .thenMany(operations.createCollection(Employee.class, options))
             .thenMany(Flux.range(1, 10).map(this::make))
             .flatMap(employeeRepository::save)
             .thenMany(employeeRepository.findAll())
             .subscribe(System.out::println);
-    }
+   }
 
     private Employee make(int n) {
         Employee employee = new Employee();
