@@ -4,9 +4,14 @@ import com.toxin.reactive.entity.Employee;
 import com.toxin.reactive.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
+
+import java.time.Duration;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.*;
@@ -52,5 +57,10 @@ public class EmployeeController {
             employeeService.remove(req.pathVariable("id")),
             Void.class
         ));
+    }
+
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<Employee> stream() {
+        return employeeService.findAll().delayElements(Duration.ofSeconds(1));
     }
 }

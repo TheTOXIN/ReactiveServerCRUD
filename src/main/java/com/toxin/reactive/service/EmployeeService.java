@@ -4,6 +4,7 @@ import com.toxin.reactive.entity.Employee;
 import com.toxin.reactive.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,10 @@ import java.time.LocalDateTime;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+
+    public Flux<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
 
     public Mono<Employee> find(String id) {
         return employeeRepository.findById(id);
