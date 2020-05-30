@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -48,7 +47,7 @@ public class ReactiveApplication {
 
         employee.setId(null);
         employee.setName("TEST_" + n);
-        employee.setPhoto("http://www.gravatar.com/avatar/" + UUID.randomUUID() + "?d=identicon");
+        employee.setPhoto("http://www.gravatar.com/avatar/" + n + "?d=identicon");
         employee.setPosition("POS_" + n);
         employee.setSalary(n * 1000);
         employee.setWork(true);
