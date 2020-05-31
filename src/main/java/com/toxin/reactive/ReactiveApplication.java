@@ -14,6 +14,8 @@ import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 
+import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
+
 @SpringBootApplication
 @RequiredArgsConstructor
 @EnableReactiveMongoRepositories
@@ -47,7 +49,7 @@ public class ReactiveApplication {
 
         employee.setId(null);
         employee.setName("TEST_" + n);
-        employee.setPhoto("http://www.gravatar.com/avatar/" + n + "?d=identicon");
+        employee.setPhoto(getAvatar(employee));
         employee.setPosition("POS_" + n);
         employee.setSalary(n * 1000);
         employee.setWork(true);
