@@ -46,6 +46,6 @@ public class EmployeeService {
     public Flux<Employee> stream() {
         return employeeRepository
             .findAllByWork(true)
-            .delayElements(Duration.ofSeconds(1));
+            .delayElements(Duration.ofMillis(100));
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.web.cors.CorsConfiguration;
@@ -33,14 +32,8 @@ public class ReactiveApplication {
 
     @Bean
     InitializingBean init() {
-        var options = CollectionOptions
-            .empty()
-            .capped()
-            .size(1024 * 1024)
-            .maxDocuments(100);
-
         return () -> operations.dropCollection(Employee.class)
-            .thenMany(operations.createCollection(Employee.class, options))
+            .thenMany(operations.createCollection(Employee.class))
             .thenMany(Flux.range(1, 10).map(this::make))
             .flatMap(employeeRepository::save)
             .thenMany(employeeRepository.findAll())
