@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
@@ -56,5 +59,20 @@ public class ReactiveApplication {
         employee.setHired(LocalDateTime.now());
 
         return employee;
+    }
+
+    @Bean
+    public CorsWebFilter cors() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.addAllowedOrigin("*");
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return new CorsWebFilter(source);
     }
 }
