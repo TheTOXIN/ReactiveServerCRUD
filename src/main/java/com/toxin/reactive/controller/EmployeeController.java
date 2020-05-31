@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -34,10 +35,10 @@ public class EmployeeController {
 
     @Bean
     RouterFunction<ServerResponse> read() {
-        return route(GET("/employees/{id}"), req -> ok().body(
-            employeeService.find(req.pathVariable("id")),
-            Employee.class
-        ));
+        return route(GET("/employees/{id}"), req -> employeeService.find(req.pathVariable("id"))
+            .flatMap((post) -> ServerResponse.ok().body(Mono.just(post), Employee.class))
+            .switchIfEmpty(ServerResponse.notFound().build())
+        );
     }
 
     @Bean

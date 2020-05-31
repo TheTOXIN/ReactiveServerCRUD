@@ -46,7 +46,6 @@ public class EmployeeService {
     public Flux<Employee> stream() {
         return employeeRepository
             .findAllByOrderByHired()
-            .filter(Employee::isWork)
             .delayElements(Duration.ofMillis(300));
     }
 }
