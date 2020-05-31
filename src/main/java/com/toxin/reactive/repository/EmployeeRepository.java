@@ -8,5 +8,5 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface EmployeeRepository extends ReactiveMongoRepository<Employee, String> {
 
-    Flux<Employee> findAllByWork(boolean work);
+    Flux<Employee> findAllByOrderByHired();
 }
