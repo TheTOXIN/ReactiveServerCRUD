@@ -47,6 +47,6 @@ public class EmployeeService {
         return employeeRepository
             .findAllByOrderByHired()
             .filter(Employee::isWork)
-            .delayElements(Duration.ofMillis(100));
+            .delayElements(Duration.ofMillis(300));
     }
 }
