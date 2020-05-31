@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
+
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
@@ -23,6 +25,7 @@ public class EmployeeService {
     public Mono<Employee> save(Employee employee) {
         employee.setId(null);
         employee.setWork(true);
+        employee.setPhoto(getAvatar(employee));
         employee.setHired(LocalDateTime.now());
 
         return employeeRepository.save(employee);
@@ -32,7 +35,7 @@ public class EmployeeService {
         return employeeRepository.findById(id).doOnNext(exist -> {
             exist.setPosition(employee.getPosition());
             exist.setSalary(employee.getSalary());
-            exist.setPhoto(employee.getPhoto());
+            exist.setName(employee.getName());
             exist.setWork(employee.isWork());
         }).flatMap(employeeRepository::save);
     }
