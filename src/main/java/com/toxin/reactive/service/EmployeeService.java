@@ -3,12 +3,14 @@ package com.toxin.reactive.service;
 import com.toxin.reactive.entity.Employee;
 import com.toxin.reactive.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
 import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
 
@@ -17,6 +19,9 @@ import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+
+    @Value("${employees.stream.duration:1000}")
+    private Long streamDuration;
 
     public Mono<Employee> find(String id) {
         return employeeRepository.findById(id);
@@ -43,9 +48,15 @@ public class EmployeeService {
         return employeeRepository.deleteById(id);
     }
 
+    public Flux<Employee> findAll() {
+        return employeeRepository.findAllByOrderByHired();
+    }
+
     public Flux<Employee> stream() {
-        return Flux.interval(Duration.ofSeconds(3))
+         return employeeRepository.count()
+            .map(Function.identity())
+            .flatMapMany(n -> Flux.interval(Duration.ofMillis(n * streamDuration)))
             .flatMap(i -> employeeRepository.findAllByOrderByHired())
-            .delayElements(Duration.ofMillis(300));
+            .delayElements(Duration.ofMillis(streamDuration));
     }
 }

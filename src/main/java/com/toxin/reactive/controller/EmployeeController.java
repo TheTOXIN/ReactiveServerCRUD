@@ -53,10 +53,15 @@ public class EmployeeController {
 
     @Bean
     RouterFunction<ServerResponse> delete() {
-        return route(DELETE("/employees/{id}"), req -> ok().body(
+        return route(DELETE("//{id}"), req -> ok().body(
             employeeService.remove(req.pathVariable("id")),
             Void.class
         ));
+    }
+
+    @GetMapping("employees")
+    public Flux<Employee> all() {
+        return employeeService.findAll();
     }
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
