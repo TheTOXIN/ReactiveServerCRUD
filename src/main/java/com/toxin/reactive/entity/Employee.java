@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -20,17 +22,21 @@ public class Employee {
     private String id;
 
     @NotNull
+    @NotBlank
     private String name;
 
     @NotNull
+    @NotBlank
     private String photo;
 
     @NotNull
+    @NotBlank
     private String position;
 
     @NotNull
     private EmployeeActivity activity;
 
+    @Min(1)
     @NotNull
     private int salary;
 
