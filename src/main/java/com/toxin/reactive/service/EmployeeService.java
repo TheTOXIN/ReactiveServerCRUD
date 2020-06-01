@@ -44,8 +44,8 @@ public class EmployeeService {
     }
 
     public Flux<Employee> stream() {
-        return employeeRepository
-            .findAllByOrderByHired()
+        return Flux.interval(Duration.ofSeconds(3))
+            .flatMap(i -> employeeRepository.findAllByOrderByHired())
             .delayElements(Duration.ofMillis(300));
     }
 }
