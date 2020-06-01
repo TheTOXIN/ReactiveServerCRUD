@@ -53,7 +53,7 @@ public class EmployeeController {
 
     @Bean
     RouterFunction<ServerResponse> delete() {
-        return route(DELETE("//{id}"), req -> ok().body(
+        return route(DELETE("/employees/{id}"), req -> ok().body(
             employeeService.remove(req.pathVariable("id")),
             Void.class
         ));
