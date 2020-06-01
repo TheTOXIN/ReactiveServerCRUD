@@ -69,7 +69,7 @@ public class EmployeeController {
         return employeeService.stream().map(e ->
             ServerSentEvent.<Employee>builder()
                 .id(String.valueOf(e.getId()))
-                .event("employees")
+                .event(e.getEvent())
                 .data(e)
                 .build()
         );

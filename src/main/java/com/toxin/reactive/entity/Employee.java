@@ -1,9 +1,11 @@
 package com.toxin.reactive.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -35,4 +37,8 @@ public class Employee {
 
     @NotNull
     private LocalDate hired;
+
+    @Transient
+    @JsonIgnore
+    private String event;
 }

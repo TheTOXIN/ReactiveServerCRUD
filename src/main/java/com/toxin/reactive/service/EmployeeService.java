@@ -9,6 +9,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
@@ -17,6 +19,10 @@ import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
 @RequiredArgsConstructor
 public class EmployeeService {
 
+    private final static String EVENT_HIRED = "hired-employee";
+    private final static String EVENT_FIRED = "fired-employee";
+
+    private final List<Employee> firedEmployees = new ArrayList<>();
     private final EmployeeRepository employeeRepository;
 
     @Value("${employees.stream.duration:1000}")
@@ -45,7 +51,9 @@ public class EmployeeService {
     }
 
     public Mono<Void> remove(String id) {
-        return employeeRepository.deleteById(id);
+        return employeeRepository.findById(id)
+            .doOnNext(firedEmployees::add)
+            .flatMap(employeeRepository::delete);
     }
 
     public Flux<Employee> findAll() {
@@ -53,10 +61,15 @@ public class EmployeeService {
     }
 
     public Flux<Employee> stream() {
-         return employeeRepository.count()
+        Flux<Employee> employeesFlux = Flux.merge(
+            employeeRepository.findAllByOrderByHired().doOnNext(e -> e.setEvent(EVENT_HIRED)),
+            Flux.fromIterable(firedEmployees).doOnNext(e -> e.setEvent(EVENT_FIRED))
+        );
+
+        return employeeRepository.count()
             .map(Function.identity())
             .flatMapMany(n -> Flux.interval(Duration.ofMillis(n * streamDuration)))
-            .flatMap(i -> employeeRepository.findAllByOrderByHired())
+            .flatMap(i -> employeesFlux)
             .delayElements(Duration.ofMillis(streamDuration));
     }
 }
