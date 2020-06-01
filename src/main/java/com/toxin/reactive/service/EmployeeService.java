@@ -28,6 +28,7 @@ public class EmployeeService {
 
     public Mono<Employee> save(Employee employee) {
         employee.setId(null);
+        employee.setWork(true);
         employee.setPhoto(getAvatar(employee));
 
         return employeeRepository.save(employee);
