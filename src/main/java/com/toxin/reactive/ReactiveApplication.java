@@ -1,8 +1,11 @@
 package com.toxin.reactive;
 
+import com.toxin.reactive.component.EmployeeWorking;
+import com.toxin.reactive.constant.EmployeeActivity;
 import com.toxin.reactive.entity.Employee;
 import com.toxin.reactive.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +21,7 @@ import java.time.LocalDate;
 
 import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
 
+@Log4j2
 @SpringBootApplication
 @RequiredArgsConstructor
 @EnableReactiveMongoRepositories
@@ -25,6 +29,7 @@ public class ReactiveApplication {
 
     private final EmployeeRepository employeeRepository;
     private final ReactiveMongoOperations operations;
+    private final EmployeeWorking employeeWorking;
 
     public static void main(String[] args) {
         SpringApplication.run(ReactiveApplication.class, args);
@@ -37,7 +42,7 @@ public class ReactiveApplication {
             .thenMany(Flux.range(1, 10).map(this::make))
             .flatMap(employeeRepository::save)
             .thenMany(employeeRepository.findAll())
-            .subscribe(System.out::println);
+            .subscribe(System.out::println, log::error, employeeWorking::start);
    }
 
     private Employee make(int n) {
@@ -47,6 +52,7 @@ public class ReactiveApplication {
         employee.setName("TEST_" + n);
         employee.setPhoto(getAvatar(employee));
         employee.setPosition("POS_" + n);
+        employee.setActivity(EmployeeActivity.random());
         employee.setSalary(n * 1000);
         employee.setWork(true);
         employee.setHired(LocalDate.now().plusDays(n));

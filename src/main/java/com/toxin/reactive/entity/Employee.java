@@ -1,5 +1,6 @@
 package com.toxin.reactive.entity;
 
+import com.toxin.reactive.constant.EmployeeActivity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,9 @@ public class Employee {
 
     @NotNull
     private String position;
+
+    @NotNull
+    private EmployeeActivity activity;
 
     @NotNull
     private int salary;

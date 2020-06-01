@@ -1,5 +1,6 @@
 package com.toxin.reactive.service;
 
+import com.toxin.reactive.constant.EmployeeActivity;
 import com.toxin.reactive.entity.Employee;
 import com.toxin.reactive.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.util.function.Function;
 
 import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
 
@@ -30,6 +30,7 @@ public class EmployeeService {
         employee.setId(null);
         employee.setWork(true);
         employee.setPhoto(getAvatar(employee));
+        employee.setActivity(EmployeeActivity.random());
 
         return employeeRepository.save(employee);
     }
@@ -53,10 +54,8 @@ public class EmployeeService {
     }
 
     public Flux<Employee> stream() {
-         return employeeRepository.count()
-            .map(Function.identity())
-            .flatMapMany(n -> Flux.interval(Duration.ofMillis(n * streamDuration)))
-            .flatMap(i -> employeeRepository.findAllByOrderByHired())
-            .delayElements(Duration.ofMillis(streamDuration));
+         return employeeRepository
+             .findAllByOrderByHired()
+             .delayElements(Duration.ofMillis(streamDuration));
     }
 }
