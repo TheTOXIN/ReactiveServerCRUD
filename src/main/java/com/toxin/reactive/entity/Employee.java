@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -34,5 +34,5 @@ public class Employee {
     private boolean work;
 
     @NotNull
-    private LocalDateTime hired;
+    private LocalDate hired;
 }

@@ -14,7 +14,7 @@ import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
 
@@ -49,7 +49,7 @@ public class ReactiveApplication {
         employee.setPosition("POS_" + n);
         employee.setSalary(n * 1000);
         employee.setWork(true);
-        employee.setHired(LocalDateTime.now());
+        employee.setHired(LocalDate.now().plusDays(n));
 
         return employee;
     }
