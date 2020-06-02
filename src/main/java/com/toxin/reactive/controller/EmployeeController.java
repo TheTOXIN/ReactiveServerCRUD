@@ -59,7 +59,7 @@ public class EmployeeController {
         ));
     }
 
-    @GetMapping("employees")
+    @GetMapping("/employees")
     public Flux<Employee> all() {
         return employeeService.findAll();
     }
