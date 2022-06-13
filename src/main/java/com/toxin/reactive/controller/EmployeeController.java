@@ -13,6 +13,9 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.util.Random;
+
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
@@ -72,6 +75,6 @@ public class EmployeeController {
                 .event("employees")
                 .data(e)
                 .build()
-        );
+        ).concatWith(Flux.never());
     }
 }

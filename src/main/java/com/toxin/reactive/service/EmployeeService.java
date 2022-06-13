@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 import static com.toxin.reactive.util.EmployeeUtils.getAvatar;
 
@@ -54,8 +55,23 @@ public class EmployeeService {
     }
 
     public Flux<Employee> stream() {
+        return employeeRepository.findAllByOrderByHired()
+            .delayElements(Duration.ofMillis(streamDuration))
+            .repeat();
+    }
+
+    /**
+     * https://stackoverflow.com/questions/46058993/spring-web-flux-reactive-server-sent-events-infinite-loop
+     *
+     * For infinity stream connection with EventSource on client side,
+     * mongo collection must be Capped with Tailable Cursors,
+     * but then documents cannot be updated there,
+     *
+     * db.runCommand({"convertToCapped": "employees", size: 100000})
+     */
+    public Flux<Employee> streamTest() {
          return employeeRepository
-             .findAllByOrderByHired()
+             .findAllStream()
              .delayElements(Duration.ofMillis(streamDuration));
     }
 }
